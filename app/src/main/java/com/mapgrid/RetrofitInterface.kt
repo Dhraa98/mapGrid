@@ -2,6 +2,7 @@ package com.networking.retrofit
 
 
 import com.mapgrid.Coordinate
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -13,12 +14,19 @@ interface RetrofitInterface {
 
     //get Videos
 //    @Headers("user-key : ${R.string.header}")
-    @GET("/{query}")
+   /* @GET("/{query}")
     suspend fun getPlacesApi(
         @Path("query") topRight: String
 
 
-    ): Response<Coordinate>
+    ): Response<Coordinate>*/
+
+    @GET("/{query}")
+     fun getPlacesApi(
+        @Path("query") topRight: String
+
+
+    ): Call<Coordinate>
 
 
 

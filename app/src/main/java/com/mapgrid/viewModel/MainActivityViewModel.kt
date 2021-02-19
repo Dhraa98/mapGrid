@@ -5,8 +5,10 @@ import android.location.Address
 import android.location.Geocoder
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
+import com.mapgrid.Coordinate
 import com.mapgrid.repository.CoordinateRepository
 import kotlinx.coroutines.Dispatchers
 import java.io.IOException
@@ -20,21 +22,22 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     var BottomRightlatitude = 0.0
     var BottomRightlongitude = 0.0
 
-   // val userRepository = CoordinateRepository(latitude, longitude)
-   /* fun getUser(): LiveData<RestaurantModel> {
+
+    fun getRestaurant(): LiveData<Coordinate> {
+        val userRepository = CoordinateRepository(TopLeftlatitude, TopLeftlongitude,BottomRightlatitude,BottomRightlongitude)
        val loginResponseModelMutableLiveData = userRepository.getPlaces()
         return loginResponseModelMutableLiveData
     }
-*/
     var progressVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
 
 
     var itemClicked: MutableLiveData<Boolean> = MutableLiveData(false)
-    fun getRestaurant() = liveData(Dispatchers.IO) {
+   /* fun getRestaurant() = liveData(Dispatchers.IO) {
         val userRepository = CoordinateRepository(TopLeftlatitude, TopLeftlongitude,BottomRightlatitude,BottomRightlongitude)
         val retrievedData = userRepository.getUsers()
         emit(retrievedData)
-    }
+        this is for co rountine
+    }*/
 /*
     val data: LiveData<Response<RestaurantModel>> = liveData(Dispatchers.IO) {
 //        progressVisibility.value=true

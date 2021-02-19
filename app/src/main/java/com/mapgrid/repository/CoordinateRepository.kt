@@ -1,7 +1,14 @@
 package com.mapgrid.repository
 
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.mapgrid.Coordinate
 import com.networking.retrofit.RetrofitClass
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.http.Url
 
 
@@ -12,33 +19,31 @@ class CoordinateRepository(
     var BottomRightlng: Double
 ) {
 
-    suspend fun getUsers() = RetrofitClass.getClient.getPlacesApi(
+   /* suspend fun getUsers() = RetrofitClass.getClient.getPlacesApi(
         "$TopLeftlat/$TopLeftlng/$BottomRightlat/$BottomRightlng"
 
 
-    )
-    /* var dataValue: MutableLiveData<RestaurantModel> = MutableLiveData()
+    )*/
+     var dataValue: MutableLiveData<Coordinate> = MutableLiveData()
      private  val TAG = "RestauratRepository"
 
 
 
-     fun getPlaces(): LiveData<RestaurantModel> {
+     fun getPlaces(): LiveData<Coordinate> {
 
-         val call: Call<RestaurantModel> =
-             RetrofitClass.getClient.getPlacesApi("1cc5f7df7bf1425e718a4ca9c504cada",
-                 lat,
-                 lng)
+         val call: Call<Coordinate> =
+             RetrofitClass.getClient.getPlacesApi("$TopLeftlat/$TopLeftlng/$BottomRightlat/$BottomRightlng")
 
-         call.enqueue(object : Callback<RestaurantModel> {
+         call.enqueue(object : Callback<Coordinate> {
 
              override fun onResponse(
-                 call: Call<RestaurantModel>?,
-                 response: Response<RestaurantModel>?
+                 call: Call<Coordinate>?,
+                 response: Response<Coordinate>?
              ) {
                  if (response!!.isSuccessful) {
 
 
-                     if (response.body()!!.nearbyRestaurants!!.size != null && response.body()!!.nearbyRestaurants!!.size > 0) {
+                     if (response.body()!!.cOORDINATEINFO!!.size != null && response.body()!!.cOORDINATEINFO!!.size > 0) {
 
                              dataValue.postValue( response.body())
 
@@ -54,11 +59,11 @@ class CoordinateRepository(
 
              }
 
-             override fun onFailure(call: Call<RestaurantModel>?, t: Throwable?) {
+             override fun onFailure(call: Call<Coordinate>?, t: Throwable?) {
                  dataValue.postValue( null)
                  //  Toast.makeText(context, t!!.message, Toast.LENGTH_SHORT).show()
              }
          })
          return dataValue
-     }*/
+     }
 }

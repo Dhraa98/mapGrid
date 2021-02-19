@@ -131,43 +131,75 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
 
             //  list.clear()
             viewModel.getRestaurant().observe(this, androidx.lifecycle.Observer {
-                if (it.isSuccessful) {
-                    // Log.e("TAG", "onCameraChange: "+it.body() )
+//                if (it.isSuccessful) {
+                // Log.e("TAG", "onCameraChange: "+it.body() )
 
-                    for (i in it.body()?.cOORDINATEINFO!!.indices) {
-                        list.addAll(listOf(it.body()!!.cOORDINATEINFO!![i]))
+                for (i in it.cOORDINATEINFO!!.indices) {
+                    //list.addAll(listOf(it.body()!!.cOORDINATEINFO!![i]))
+                    val rectOptions = PolygonOptions()
+                        .add(
+                            LatLng(
+                                it!!.cOORDINATEINFO!![i].cOORDINATE1!!.get(1).toDouble(),
+                                it!!.cOORDINATEINFO!![i].cOORDINATE1!![1].toDouble()
+                            ),
+                            LatLng(
+                                it!!.cOORDINATEINFO!![i].cOORDINATE2!![0].toDouble(),
+                                it!!.cOORDINATEINFO!![i].cOORDINATE2!![1].toDouble()
+                            ),
+                            LatLng(
+                                it!!.cOORDINATEINFO!![i].cOORDINATE3!![0].toDouble(),
+                                it!!.cOORDINATEINFO!![i].cOORDINATE3!![1].toDouble()
+                            ),
+                            LatLng(
+                                it!!.cOORDINATEINFO!![i].cOORDINATE4!![0].toDouble(),
+                                it!!.cOORDINATEINFO!![i].cOORDINATE4!![1].toDouble()
+                            ),
+                            LatLng(
+                                it!!.cOORDINATEINFO!![i].cOORDINATE5!![0].toDouble(),
+                                it!!.cOORDINATEINFO!![i].cOORDINATE5!![1].toDouble()
+                            )
+                        )
+                        .strokeColor(Color.DKGRAY)
+                        .strokeWidth(2f)
+                        .clickable(true)
 
+                    polygon = map.addPolygon(rectOptions)
 
+                    if (i == 1000) {
+                        break
                     }
-                    val featureCollection = JSONObject()
-                    try {
-                        featureCollection.put("type", "FeatureCollection")
-                        val featureList = JSONArray()
 
-                        for (obj in list) {
 
-                            val point = JSONObject()
-                            point.put("type", "Polygon")
-
-                            val coord =
-                                JSONArray("[[" + "["+obj.cOORDINATE1!!.get(1)+ "," +obj.cOORDINATE1!!.get(0) + "],[" + obj.cOORDINATE2!!.get(1)+ "," +obj.cOORDINATE2!!.get(0) + "],[" + obj.cOORDINATE3!!.get(1)+ "," +obj.cOORDINATE3!!.get(0) + "],[" + obj.cOORDINATE4!!.get(1)+ "," +obj.cOORDINATE4!!.get(0) + "],[" + obj.cOORDINATE5!!.get(1)+ "," +obj.cOORDINATE5!!.get(0) + "]]]")
-                            point.put("coordinates", coord)
-                            val feature = JSONObject()
-                            feature.put("type", "Feature")
-                            feature.put("geometry", point)
-                            featureList.put(feature)
-                            featureCollection.put("features", featureList)
-                        }
-                    } catch (e: JSONException) {
-                        Log.e("TAG", "onCreate: $e")
-
-                    }
-
-                    Log.e("TAG", featureCollection.toString())
-
-                    createGrid(featureCollection)
-                    // createRectangle()
                 }
+                /*  val featureCollection = JSONObject()
+                  try {
+                      featureCollection.put("type", "FeatureCollection")
+                      val featureList = JSONArray()
+
+                      for (obj in list) {
+
+                          val point = JSONObject()
+                          point.put("type", "Polygon")
+
+                          val coord =
+                              JSONArray("[[" + "["+obj.cOORDINATE1!!.get(1)+ "," +obj.cOORDINATE1!!.get(0) + "],[" + obj.cOORDINATE2!!.get(1)+ "," +obj.cOORDINATE2!!.get(0) + "],[" + obj.cOORDINATE3!!.get(1)+ "," +obj.cOORDINATE3!!.get(0) + "],[" + obj.cOORDINATE4!!.get(1)+ "," +obj.cOORDINATE4!!.get(0) + "],[" + obj.cOORDINATE5!!.get(1)+ "," +obj.cOORDINATE5!!.get(0) + "]]]")
+                          point.put("coordinates", coord)
+                          val feature = JSONObject()
+                          feature.put("type", "Feature")
+                          feature.put("geometry", point)
+                          featureList.put(feature)
+                          featureCollection.put("features", featureList)
+                      }
+                  } catch (e: JSONException) {
+                      Log.e("TAG", "onCreate: $e")
+
+                  }
+
+                  Log.e("TAG", featureCollection.toString())
+
+                  createGrid(featureCollection)*/
+                // createRectangle()
+
             })
 
         } else if (zoomLevel <= 19) {
@@ -182,8 +214,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
         layer.addLayerToMap()
         val pointStyle = layer.defaultPolygonStyle
         pointStyle.isClickable = true
-        pointStyle.strokeColor = Color.BLUE
-        pointStyle.strokeWidth = 2f
+        pointStyle.strokeColor = Color.GRAY
+        pointStyle.strokeWidth = 3f
     }
 
     private fun createRectangle() {
@@ -215,7 +247,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
                             )
                         )
                         .strokeColor(Color.LTGRAY)
-                        .strokeWidth(1f)
+                        .strokeWidth(2f)
                         .clickable(true)
 
                     polygon = map.addPolygon(rectOptions)
