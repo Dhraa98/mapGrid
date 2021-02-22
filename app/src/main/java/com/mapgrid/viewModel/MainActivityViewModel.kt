@@ -36,7 +36,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         val userRepository = CoordinateRepository(TopLeftlatitude, TopLeftlongitude,BottomRightlatitude,BottomRightlongitude)
         val retrievedData = userRepository.getUsers()
         emit(retrievedData)
-        this is for co rountine
+
     }*/
 /*
     val data: LiveData<Response<RestaurantModel>> = liveData(Dispatchers.IO) {

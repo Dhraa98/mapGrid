@@ -6,10 +6,10 @@ import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
-
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -21,8 +21,6 @@ import com.google.maps.android.data.geojson.GeoJsonLayer
 import com.mapgrid.viewModel.MainActivityViewModel
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
-import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
@@ -32,9 +30,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var polygon: Polygon
 
+    private val EARTH_RADIOUS = 3958.75 // Earth radius;
+
+    private val METER_CONVERSION = 1609
+
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
-    private var list: ArrayList<Coordinate.COORDINATEINFO> = arrayListOf()
+    private var list: ArrayList<LatLng> = arrayListOf()
     private lateinit var mutablePolygon: Polygon
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +63,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
         // for getting the current location update after every 2 seconds with high accuracy
         val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-        map.animateCamera(CameraUpdateFactory.zoomTo(21.0f));
+        //map.animateCamera(CameraUpdateFactory.zoomTo(21.0f));
+
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -95,7 +98,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
                             LatLng(
                                 latitude,
                                 longitude
-                            ), 19f
+                            ), 20f
                         )
                     )
                 }
@@ -119,6 +122,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
         viewModel.TopLeftlongitude = nearLeft.longitude
         viewModel.BottomRightlatitude = farRight.latitude
         viewModel.BottomRightlongitude = farRight.longitude
+        val dist_w = distanceFrom(
+            nearLeft.latitude,
+            nearLeft.longitude,
+            nearRight.latitude,
+            nearRight.longitude
+        )
+        val dist_h =
+            distanceFrom(farLeft.latitude, farLeft.longitude, farRight.latitude, farRight.longitude)
+        Log.e("DISTANCE: ", "DISTANCE WIDTH: $dist_w DISTANCE HEIGHT: $dist_h")
 
         Log.e(
             "TAG",
@@ -126,51 +138,59 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
         )
         Log.e("TAG", "ZoomLevel: " + zoomLevel)
 
+
         //  val geoJsonData: JSONObject?
         if (zoomLevel >= 19f) {
 
             //  list.clear()
             viewModel.getRestaurant().observe(this, androidx.lifecycle.Observer {
+
+
 //                if (it.isSuccessful) {
                 // Log.e("TAG", "onCameraChange: "+it.body() )
 
                 for (i in it.cOORDINATEINFO!!.indices) {
+
                     //list.addAll(listOf(it.body()!!.cOORDINATEINFO!![i]))
                     val rectOptions = PolygonOptions()
                         .add(
                             LatLng(
-                                it!!.cOORDINATEINFO!![i].cOORDINATE1!!.get(1).toDouble(),
-                                it!!.cOORDINATEINFO!![i].cOORDINATE1!![1].toDouble()
+                                it.cOORDINATEINFO!![i].cOORDINATE1!![0].toDouble(),
+                                it.cOORDINATEINFO!![i].cOORDINATE1!![1].toDouble()
                             ),
                             LatLng(
-                                it!!.cOORDINATEINFO!![i].cOORDINATE2!![0].toDouble(),
-                                it!!.cOORDINATEINFO!![i].cOORDINATE2!![1].toDouble()
+                                it.cOORDINATEINFO!![i].cOORDINATE2!![0].toDouble(),
+                                it.cOORDINATEINFO!![i].cOORDINATE2!![1].toDouble()
                             ),
                             LatLng(
-                                it!!.cOORDINATEINFO!![i].cOORDINATE3!![0].toDouble(),
-                                it!!.cOORDINATEINFO!![i].cOORDINATE3!![1].toDouble()
+                                it.cOORDINATEINFO!![i].cOORDINATE3!![0].toDouble(),
+                                it.cOORDINATEINFO!![i].cOORDINATE3!![1].toDouble()
                             ),
                             LatLng(
-                                it!!.cOORDINATEINFO!![i].cOORDINATE4!![0].toDouble(),
-                                it!!.cOORDINATEINFO!![i].cOORDINATE4!![1].toDouble()
+                                it.cOORDINATEINFO!![i].cOORDINATE4!![0].toDouble(),
+                                it.cOORDINATEINFO!![i].cOORDINATE4!![1].toDouble()
                             ),
                             LatLng(
-                                it!!.cOORDINATEINFO!![i].cOORDINATE5!![0].toDouble(),
-                                it!!.cOORDINATEINFO!![i].cOORDINATE5!![1].toDouble()
+                                it.cOORDINATEINFO!![i].cOORDINATE5!![0].toDouble(),
+                                it.cOORDINATEINFO!![i].cOORDINATE5!![1].toDouble()
                             )
                         )
-                        .strokeColor(Color.DKGRAY)
+                        .strokeColor(Color.CYAN)
                         .strokeWidth(2f)
                         .clickable(true)
 
                     polygon = map.addPolygon(rectOptions)
 
-                    if (i == 1000) {
+
+
+                    if (i == 800) {
                         break
                     }
 
 
                 }
+
+
                 /*  val featureCollection = JSONObject()
                   try {
                       featureCollection.put("type", "FeatureCollection")
@@ -200,13 +220,49 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
                   createGrid(featureCollection)*/
                 // createRectangle()
 
+
             })
 
         } else if (zoomLevel <= 19) {
+            // polygon = map.addPolygon(null)
             //  map.clear()
 
         }
 
+
+        map.setOnPolygonClickListener(object : GoogleMap.OnPolygonClickListener {
+            override fun onPolygonClick(p0: Polygon?) {
+
+                if (p0 != null) {
+                    polygon = p0
+
+                }
+                p0!!.fillColor = Color.BLUE
+                Log.e("TAG", "onPolygonClick: "+p0.id )
+                map.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(
+                            p0.points[0].latitude,
+                            p0.points[0].longitude
+                        ), 20f
+                    )
+                )
+            }
+
+        })
+
+
+    }
+
+    fun distanceFrom(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
+        // Return distance between 2 points, stored as 2 pair location;
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLng = Math.toRadians(lng2 - lng1)
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + (Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2))
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        val dist: Double = EARTH_RADIOUS * c
+        return dist * METER_CONVERSION.toFloat()
     }
 
     private fun createGrid(geoJsonData: JSONObject?) {
@@ -219,7 +275,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
     }
 
     private fun createRectangle() {
-        list.toObservable() // extension function for Iterables
+     /*   list.toObservable() // extension function for Iterables
             .subscribeBy(  // named arguments for lambda Subscribers
                 onNext = {
                     println(it)
@@ -255,6 +311,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
                 onError = { it.printStackTrace() },
                 onComplete = { println("Done!") }
             )
+*/
+
         /*  for (i in list.indices) {
               val rectOptions = PolygonOptions()
                   .add(
@@ -286,6 +344,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
               polygon = map.addPolygon(rectOptions)
 
           }*/
+
+
     }
 
 
