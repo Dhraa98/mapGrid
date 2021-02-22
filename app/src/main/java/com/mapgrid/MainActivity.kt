@@ -30,14 +30,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var polygon: Polygon
 
-    private val EARTH_RADIOUS = 3958.75 // Earth radius;
-
-    private val METER_CONVERSION = 1609
 
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
     private var list: ArrayList<LatLng> = arrayListOf()
-    private lateinit var mutablePolygon: Polygon
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -49,7 +46,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
     private fun initMap() {
         val mapFragment =
             supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        // requireActivity().supportFragmentManager.findFragmentById(R.id.googleMap) as? SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
@@ -122,15 +118,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
         viewModel.TopLeftlongitude = nearLeft.longitude
         viewModel.BottomRightlatitude = farRight.latitude
         viewModel.BottomRightlongitude = farRight.longitude
-        val dist_w = distanceFrom(
-            nearLeft.latitude,
-            nearLeft.longitude,
-            nearRight.latitude,
-            nearRight.longitude
-        )
-        val dist_h =
-            distanceFrom(farLeft.latitude, farLeft.longitude, farRight.latitude, farRight.longitude)
-        Log.e("DISTANCE: ", "DISTANCE WIDTH: $dist_w DISTANCE HEIGHT: $dist_h")
+
+
 
         Log.e(
             "TAG",
@@ -183,7 +172,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
 
 
 
-                    if (i == 800) {
+                    if (i == 1000) {
                         break
                     }
 
@@ -224,6 +213,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
             })
 
         } else if (zoomLevel <= 19) {
+          //  polygon.remove()
             // polygon = map.addPolygon(null)
             //  map.clear()
 
@@ -254,100 +244,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
 
     }
 
-    fun distanceFrom(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
-        // Return distance between 2 points, stored as 2 pair location;
-        val dLat = Math.toRadians(lat2 - lat1)
-        val dLng = Math.toRadians(lng2 - lng1)
-        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + (Math.cos(Math.toRadians(lat1))
-                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2))
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-        val dist: Double = EARTH_RADIOUS * c
-        return dist * METER_CONVERSION.toFloat()
-    }
 
-    private fun createGrid(geoJsonData: JSONObject?) {
-        val layer = GeoJsonLayer(map, geoJsonData)
-        layer.addLayerToMap()
-        val pointStyle = layer.defaultPolygonStyle
-        pointStyle.isClickable = true
-        pointStyle.strokeColor = Color.GRAY
-        pointStyle.strokeWidth = 3f
-    }
 
-    private fun createRectangle() {
-     /*   list.toObservable() // extension function for Iterables
-            .subscribeBy(  // named arguments for lambda Subscribers
-                onNext = {
-                    println(it)
-                    val rectOptions = PolygonOptions()
-                        .add(
-                            LatLng(
-                                it.cOORDINATE1!!.get(1).toDouble(),
-                                it.cOORDINATE1!![1].toDouble()
-                            ),
-                            LatLng(
-                                it.cOORDINATE2!![0].toDouble(),
-                                it.cOORDINATE2!![1].toDouble()
-                            ),
-                            LatLng(
-                                it.cOORDINATE3!![0].toDouble(),
-                                it.cOORDINATE3!![1].toDouble()
-                            ),
-                            LatLng(
-                                it.cOORDINATE4!![0].toDouble(),
-                                it.cOORDINATE4!![1].toDouble()
-                            ),
-                            LatLng(
-                                it.cOORDINATE5!![0].toDouble(),
-                                it.cOORDINATE5!![1].toDouble()
-                            )
-                        )
-                        .strokeColor(Color.LTGRAY)
-                        .strokeWidth(2f)
-                        .clickable(true)
-
-                    polygon = map.addPolygon(rectOptions)
-                },
-                onError = { it.printStackTrace() },
-                onComplete = { println("Done!") }
-            )
-*/
-
-        /*  for (i in list.indices) {
-              val rectOptions = PolygonOptions()
-                  .add(
-                      LatLng(
-                          list[i].cOORDINATE1!!.get(1).toDouble(),
-                          list[i].cOORDINATE1!![1].toDouble()
-                      ),
-                      LatLng(
-                          list[i].cOORDINATE2!![0].toDouble(),
-                          list[i].cOORDINATE2!![1].toDouble()
-                      ),
-                      LatLng(
-                          list[i].cOORDINATE3!![0].toDouble(),
-                          list[i].cOORDINATE3!![1].toDouble()
-                      ),
-                      LatLng(
-                          list[i].cOORDINATE4!![0].toDouble(),
-                          list[i].cOORDINATE4!![1].toDouble()
-                      ),
-                      LatLng(
-                          list[i].cOORDINATE5!![0].toDouble(),
-                          list[i].cOORDINATE5!![1].toDouble()
-                      )
-                  )
-                  .strokeColor(Color.LTGRAY)
-                  .strokeWidth(1f)
-                  .clickable(true)
-
-              polygon = map.addPolygon(rectOptions)
-
-          }*/
 
 
     }
 
 
-}
+
 
